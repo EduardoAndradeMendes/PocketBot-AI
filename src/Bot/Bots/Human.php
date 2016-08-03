@@ -17,7 +17,8 @@
  *
  *
 */
-namespace pocketmine\entity;
+namespace Bot\Bots;
+
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityRegainHealthEvent;
 use pocketmine\event\player\PlayerExhaustEvent;
@@ -36,15 +37,12 @@ use pocketmine\nbt\tag\StringTag;
 use pocketmine\network\protocol\AddPlayerPacket;
 use pocketmine\network\protocol\RemoveEntityPacket;
 use pocketmine\Player;
-use pocketmine\utils\UUID;
 class Human extends Creature implements ProjectileSource, InventoryHolder{
-	const DATA_PLAYER_FLAG_SLEEP = 1;
+	/*const DATA_PLAYER_FLAG_SLEEP = 1;
 	const DATA_PLAYER_FLAG_DEAD = 2;
 	const DATA_PLAYER_FLAGS = 16;
 	const DATA_PLAYER_BED_POSITION = 17;
-	/** @var PlayerInventory */
 	protected $inventory;
-	/** @var UUID */
 	protected $uuid;
 	protected $rawUUID;
 	public $width = 0.6;
@@ -55,24 +53,12 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 	protected $skin;
 	protected $foodTickTimer = 0;
 	protected $totalXp = 0;
-	protected $xpSeed;
+	protected $xpSeed;*/
 	public function getSkinData(){
 		return $this->skin;
 	}
 	public function getSkinId(){
 		return $this->skinId;
-	}
-	/**
-	 * @return UUID|null
-	 */
-	public function getUniqueId(){
-		return $this->uuid;
-	}
-	/**
-	 * @return string
-	 */
-	public function getRawUniqueId(){
-		return $this->rawUUID;
 	}
 	/**
 	 * @param string $str
@@ -211,21 +197,22 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 		return $this->inventory;
 	}
 	protected function initEntity(){
-		$this->setDataFlag(self::DATA_PLAYER_FLAGS, self::DATA_PLAYER_FLAG_SLEEP, false);
-		$this->setDataProperty(self::DATA_PLAYER_BED_POSITION, self::DATA_TYPE_POS, [0, 0, 0]);
-		$this->inventory = new PlayerInventory($this);
+		$bot = $this->getNameTag();
+		if($this instance of Player){
+			$this->setNameTag("NPC");
+		/*$this->inventory = new PlayerInventory($this);
 		if($this instanceof Player){
-			$this->addWindow($this->inventory, 0);
+			$this->addWindow($this->inventory, 0);*/
 		}else{
 			if(isset($this->namedtag->NameTag)){
 				$this->setNameTag($this->namedtag["NameTag"]);
 			}
-			if(isset($this->namedtag->Skin) and $this->namedtag->Skin instanceof CompoundTag){
+			/*if(isset($this->namedtag->Skin) and $this->namedtag->Skin instanceof CompoundTag){
 				$this->setSkin($this->namedtag->Skin["Data"], $this->namedtag->Skin["Name"]);
-			}
-			$this->uuid = UUID::fromData($this->getId(), $this->getSkinData(), $this->getNameTag());
+			}*/
+			//$this->uuid = UUID::fromData($this->getId(), $this->getSkinData(), $this->getNameTag());
 		}
-		if(isset($this->namedtag->Inventory) and $this->namedtag->Inventory instanceof ListTag){
+		/*if(isset($this->namedtag->Inventory) and $this->namedtag->Inventory instanceof ListTag){
 			foreach($this->namedtag->Inventory as $item){
 				if($item["Slot"] >= 0 and $item["Slot"] < $this->inventory->getHotbarSize()){ //Hotbar
 					$this->inventory->setHotbarSlotIndex($item["Slot"], isset($item["TrueSlot"]) ? $item["TrueSlot"] : -1);
@@ -235,7 +222,7 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 					$this->inventory->setItem($item["Slot"] - $this->inventory->getHotbarSize(), NBT::getItemHelper($item));
 				}
 			}
-		}
+		}*/
 		parent::initEntity();
 		/*if(!isset($this->namedtag->foodLevel) or !($this->namedtag->foodLevel instanceof IntTag)){
 			$this->namedtag->foodLevel = new IntTag("foodLevel", $this->getFood());
@@ -293,7 +280,7 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 		$this->attributeMap->addAttribute(Attribute::getAttribute(Attribute::MOVEMENT_SPEED));
 		$this->attributeMap->addAttribute(Attribute::getAttribute(Attribute::ABSORPTION));
 	}
-	public function entityBaseTick($tickDiff = 1, $EnchantL = 0){
+	/*public function entityBaseTick($tickDiff = 1, $EnchantL = 0){
 		if($this->getInventory() instanceof PlayerInventory){
 			$EnchantL = $this->getInventory()->getHelmet()->getEnchantmentLevel(Enchantment::TYPE_WATER_BREATHING);
 		}
@@ -328,13 +315,13 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 			if($this->isSprinting()){
 				$this->setSprinting(false);
 			}
-		}*/
+		}
 		return $hasUpdate;
-	}
+	}*/
 	public function getName(){
 		return $this->getNameTag();
 	}
-	public function getDrops(){
+	/*public function getDrops(){
 		$drops = [];
 		if($this->inventory !== null){
 			foreach($this->inventory->getContents() as $item){
@@ -388,18 +375,18 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 				"Name" => new StringTag("Name", $this->getSkinId())
 			]);
 		}
-	}
+	}*/
 	public function spawnTo(Player $player){
-		if($player !== $this and !isset($this->hasSpawned[$player->getLoaderId()])){
+		/*if($player !== $this and !isset($this->hasSpawned[$player->getLoaderId()])){
 			$this->hasSpawned[$player->getLoaderId()] = $player;
 			if(strlen($this->skin) < 64 * 32 * 4){
 				throw new \InvalidStateException((new \ReflectionClass($this))->getShortName() . " must have a valid skin set");
 			}
 			if(!($this instanceof Player)){
 				$this->server->updatePlayerListData($this->getUniqueId(), $this->getId(), $this->getName(), $this->skinId, $this->skin, [$player]);
-			}
+			}*/
 			$pk = new AddPlayerPacket();
-			$pk->uuid = $this->getUniqueId();
+			//$pk->uuid = $this->getUniqueId();
 			$pk->username = $this->getName();
 			$pk->eid = $this->getId();
 			$pk->x = $this->x;
@@ -413,14 +400,12 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 			$pk->item = $this->getInventory()->getItemInHand();
 			$pk->metadata = $this->dataProperties;
 			$player->dataPacket($pk);
-			$this->sendLinkedData();
-			$this->inventory->sendArmorContents($player);
-			if(!($this instanceof Player)){
-				$this->server->removePlayerListData($this->getUniqueId(), [$player]);
+			//$this->sendLinkedData();
+			//$this->inventory->sendArmorContents($player);
+			/*if(!($this instanceof Player)){
+				$this->server->removePlayerListData($this->getUniqueId(), [$player]);*/
 			}
-		}
-	}
-	public function despawnFrom(Player $player){
+	/*public function despawnFrom(Player $player){
 		if(isset($this->hasSpawned[$player->getLoaderId()])){
 			$pk = new RemoveEntityPacket();
 			$pk->eid = $this->getId();
@@ -437,5 +422,5 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 			}
 			parent::close();
 		}
-	}
+	}*/
 }
